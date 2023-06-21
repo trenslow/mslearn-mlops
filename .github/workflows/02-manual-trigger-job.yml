@@ -2,9 +2,6 @@ name: Trigger an Azure Machine Learning job on main pushes
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
 jobs:
   train:
     runs-on: ubuntu-latest
