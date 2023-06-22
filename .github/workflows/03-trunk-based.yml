@@ -2,9 +2,7 @@ name: Trigger an Azure Machine Learning job PRs to main
 
 on:
   workflow_dispatch:
-    pull_request:
-      branches:
-        - main
+
 jobs:
   train:
     runs-on: ubuntu-latest
