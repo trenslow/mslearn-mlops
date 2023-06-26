@@ -74,7 +74,7 @@ jobs:
   #       run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
   #     - name: Create endpoint if doesn't exist
   #       run: |
-  #         ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
+  #         ENDPOINT_EXISTS=$(az ml online-endpoint list -o tsv --query "[?name=='mslearn-mlops-tutorial-endpoint'][name]" | wc -l)
   #         if [[ ENDPOINT_EXISTS -ne 1 ]]; then
   #           az ml online-endpoint create -f ./src/endpoint.yml
   #         else
@@ -103,7 +103,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@main
       - name: Install az ml extension
-        uses: az extension add -n ml -y
+        run: az extension add -n ml -y
       - name: Azure login
         uses: azure/login@v1
         with:
