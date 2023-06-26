@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: mlops-tutorial-deployment
+endpoint_name: mslearn-mlops-tutorial-endpoint
+model: azureml:mslearn-mlops-tutorial@latest
+instance_type: Standard_DS2_v2
+instance_count: 1
