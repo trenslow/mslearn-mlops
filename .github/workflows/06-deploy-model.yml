@@ -1,0 +1,76 @@
+name: Deploy model on push to main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  register-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@main
+      - name: Install az ml extension
+        run: az extension add -n ml -y
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Set default workspace and resource group
+        run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
+      - name: Get name of last successful job
+        run: echo "LAST_SUCCESSFUL_JOB=$(az ml job list --output tsv --query "[?experiment_name=='mslearn-mlops-tutorial-experiment-prod' && status=='Completed'].name | [0]")" >> "GITHUB_ENV"
+      - name: Register model
+        run: az ml model create --name mslearn-mlops-tutorial --type mlflow_model --path azureml://jobs/${{env.LAST_SUCCESSFUL_JOB}}/outputs/artifacts/paths/model/
+  create-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@main
+      - name: Install az ml extension
+        run: az extension add -n ml -y
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Set default workspace and resource group
+        run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
+      - name: Create endpoint if doesn't exist
+        run: |
+          ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
+          if [[ ENDPOINT_EXISTS -ne 1 ]]; then
+            az ml online-endpoint create -f ./src/endpoint.yml
+          else
+            echo "Endpoint exists already"
+          fi
+  deploy-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@main
+      - name: Install az ml extension
+        run: az extension add -n ml -y
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Set default workspace and resource group
+        run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
+      - name: Deploy latest model
+        run: az ml online-deployment create  -f ./src/deployment.yml
+  test-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@main
+      - name: Install az ml extension
+        uses: az extension add -n ml -y
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: Set default workspace and resource group
+        run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
+      - name: Test latest model
+        run: az ml online-endpoint invoke -n mslearn-mlops-tutorial-endpoint --request-file ./src/sample-data.json

@@ -11,5 +11,5 @@ inputs:
   reg_rate: 0.01
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
 compute: azureml:mslearn-mlops-tutorial-cluster
-experiment_name: mslearn-mlops-tutorial-experiment
+experiment_name: mslearn-mlops-tutorial-experiment-dev
 description: mslearn mlops tutorial
