@@ -1,10 +1,9 @@
 name: Trigger prod Azure Machine Learning job on push to main
 
 on:
-  workflow_dispatch:
-    push:
-      branches:
-        - main
+  push:
+    branches:
+      - main
 
 jobs:
   experiment:
