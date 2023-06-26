@@ -1,9 +1,7 @@
-name: Trigger prod Azure Machine Learning job on push to main
+name: Trigger training jobs on PRs to main
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   experiment:
