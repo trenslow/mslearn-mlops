@@ -52,7 +52,7 @@ jobs:
       - name: Set default workspace and resource group
         run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
       - name: Get name of last successful job
-        run: echo "LAST_SUCCESSFUL_JOB=$(az ml job list --output tsv --query "[?experiment_name=='mslearn-mlops-tutorial-experiment-prod' && status=='Completed'].name | [0]")" >> "GITHUB_ENV"
+        run: echo "LAST_SUCCESSFUL_JOB=$(az ml job list --output tsv --query "[?experiment_name=='mslearn-mlops-tutorial-experiment-prod' && status=='Completed'].name | [0]")" >> "$GITHUB_ENV"
       - name: Register model
         run: az ml model create --name mslearn-mlops-tutorial --type mlflow_model --path azureml://jobs/${{env.LAST_SUCCESSFUL_JOB}}/outputs/artifacts/paths/model/
   # create-endpoint:
