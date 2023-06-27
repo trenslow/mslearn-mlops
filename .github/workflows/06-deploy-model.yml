@@ -91,7 +91,7 @@ jobs:
       - name: Set default workspace and resource group
         run: az configure --defaults group=rg-redi-dev workspace=amlws-redi-dev
       - name: Deploy latest model
-        run: az ml online-deployment create  -f ./src/deployment.yml
+        run: az ml online-deployment update -f ./src/deployment.yml
   test-endpoint:
     runs-on: ubuntu-latest
     needs: deploy-model
